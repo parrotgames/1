@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake and Apple Game</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container-game {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        canvas {
+            border: 2px solid #333;
+            background-color: #1e1e1e;
+            margin-bottom: 20px;
+        }
+
+        #score {
+            color: #ff6347;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #222;
+            margin: 20% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%;
+            text-align: center;
+        }
+
+        .close {
+            color: #ccc;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: none;
+        }
+
+        .c-buttons, .c-buttons2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button#upButton,
+        button#downButton,
+        button#leftButton,
+        button#rightButton {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            border-radius: 50%;
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="back-button" onclick="history.back()">Back</button>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <button id="startButton">Start Game</button>
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Game Over!</h2>
+            <p id="finalScore"></p>
+            <button id="restartButton">Restart</button>
+        </div>
+    </div>
+    <div class="c-buttons">
+        <button id="leftButton">&#8592;</button>
+        <button id="upButton">&#8593;</button>
+        <button id="rightButton">&#8594;</button>
+    </div>
+    <div class="c-buttons2">
+        <button id="downButton">&#8595;</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreDisplay = document.getElementById("score");
+        const startButton = document.getElementById("startButton");
+        const gameOverModal = document.getElementById("gameOverModal");
+        const finalScoreDisplay = document.getElementById("finalScore");
+        const restartButton = document.getElementById("restartButton");
+
+        let snake = [{ x: 200, y: 200 }];
+        let dx = 0;
+        let dy = 0;
+        let apple = { x: 100, y: 100 };
+        const speed = 150;
+        let score = 0;
+        let intervalId;
+
+        function drawSnake() {
+            snake.forEach(segment => {
+                ctx.fillStyle = "#1db954";
+                ctx.fillRect(segment.x, segment.y, 20, 20);
+            });
+        }
+
+        function drawApple() {
+            ctx.fillStyle = "#ff6347";
+            ctx.fillRect(apple.x, apple.y, 20, 20);
+        }
+
+        function moveSnake() {
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            snake.unshift(head);
+            if (head.x === apple.x && head.y === apple.y) {
+                generateApple();
+                score++;
+                updateScore();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function generateApple() {
+            const x = Math.floor(Math.random() * 20) * 20;
+            const y = Math.floor(Math.random() * 20) * 20;
+            apple = { x: x, y: y };
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                return true;
+            }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawApple();
+            drawSnake();
+            moveSnake();
+            if (checkCollision()) {
+                endGame();
+            }
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = "Score: " + score;
+        }
+
+        function handleKeyPress(event) {
+            const key = event.key;
+            if (key === "ArrowUp" && dy !== 20) {
+                dx = 0;
+                dy = -20;
+            } else if (key === "ArrowDown" && dy !== -20) {
+                dx = 0;
+                dy = 20;
+            } else if (key === "ArrowLeft" && dx !== 20) {
+                dx = -20;
+                dy = 0;
+            } else if (key === "ArrowRight" && dx !== -20) {
+                dx = 20;
+                dy = 0;
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            updateScore();
+            resetSnake();
+            generateApple();
+            intervalId = setInterval(update, speed);
+            startButton.style.display = "none";
+            window.addEventListener("keydown", handleKeyPress);
+        }
+
+        function endGame() {
+            clearInterval(intervalId);
+            gameOverModal.style.display = "block";
+            finalScoreDisplay.textContent = "Your Score: " + score;
+            window.removeEventListener("keydown", handleKeyPress);
+        }
+
+        function restartGame() {
+            gameOverModal.style.display = "none";
+            startGame();
+        }
+
+        function resetSnake() {
+            snake = [{ x: 200, y: 200 }];
+            dx = 0;
+            dy = 0;
+        }
+
+        const upButton = document.getElementById("upButton");
+        const downButton = document.getElementById("downButton");
+        const leftButton = document.getElementById("leftButton");
+        const rightButton = document.getElementById("rightButton");
+
+        upButton.addEventListener("click", () => handleArrowClick("ArrowUp"));
+        downButton.addEventListener("click", () => handleArrowClick("ArrowDown"));
+        leftButton.addEventListener("click", () => handleArrowClick("ArrowLeft"));
+        rightButton.addEventListener("click", () => handleArrowClick("ArrowRight"));
+
+        function handleArrowClick(direction) {
+            if (direction === "ArrowUp" && dy !== 20) {
+                dx = 0;
+                dy = -20;
+            } else if (direction === "ArrowDown" && dy !== -20) {
+                dx = 0;
+                dy = 20;
+            } else if (direction === "ArrowLeft" && dx !== 20) {
+                dx = -20;
+                dy = 0;
+            } else if (direction === "ArrowRight" && dx !== -20) {
+                dx = 20;
+                dy = 0;
+            }
+        }
+
+        startButton.addEventListener("click", startGame);
+        restartButton.addEventListener("click", restartGame);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Clock with Stopwatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #clock {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        #stopwatch {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #clock {
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        #stopwatch {
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        #clockbtn {
+            margin-top: 10px;
+            background-color: #333;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .back-button {
+            padding: 10px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #444;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+            grid-column-end: span 2;
+            /* Fills two grid columns */
+        }
+
+        .back-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="clock"></div>
+        <div id="stopwatch">00:00:00</div>
+        <button class="btn" id="startStopBtn" onclick="toggleStopwatch()">Start / Stop</button>
+        <button class="btn" id="resetBtn" onclick="resetStopwatch()">Reset</button>
+        <button class="back-button" id="clockbtn" onclick="history.back()">Back</button>
+    </div>
+    <script>
+        let stopwatchInterval;
+        let stopwatchRunning = false;
+        let stopwatchTime = 0;
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById("clock").textContent = timeString;
+        }
+
+        function updateStopwatch() {
+            const hours = String(Math.floor(stopwatchTime / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((stopwatchTime % 3600) / 60)).padStart(2, '0');
+            const seconds = String(stopwatchTime % 60).padStart(2, '0');
+
+            const stopwatchString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById("stopwatch").textContent = stopwatchString;
+        }
+
+        function toggleStopwatch() {
+            if (!stopwatchRunning) {
+                stopwatchInterval = setInterval(() => {
+                    stopwatchTime++;
+                    updateStopwatch();
+                }, 1000);
+                document.getElementById("startStopBtn").textContent = "Stop";
+            } else {
+                clearInterval(stopwatchInterval);
+                document.getElementById("startStopBtn").textContent = "Start";
+            }
+            stopwatchRunning = !stopwatchRunning;
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            stopwatchTime = 0;
+            updateStopwatch();
+            document.getElementById("startStopBtn").textContent = "Start";
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+
+        // Initial call to display the clock immediately
+        updateClock();
+    </script>
+</body>
+
+</html>
