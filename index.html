@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator and Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="homebody">
+    <div class="box-container" id="home-screen">
+        <div class="box" onclick="showCalculator()">
+            <img src="Images/Calculator-Image-18.png" alt="Calculator Icon">
+            <span>Calculator</span>
+        </div>
+        <div class="box" onclick="showGame()">
+            <img src="Images/AppleSnake-Image-18.png" alt="Apple">
+            <span>Game</span>
+        </div>
+        <div class="box" onclick="showClock()">
+            <img src="Images/Clock-Image-18.png" alt="Clock">
+            <span>Clock</span>
+        </div>
+        <div class="box" onclick="showMemoryMatch()">
+            <img src="Images/MemoryMatch-Image-18.png" alt="Memory Match Icon">
+            <span>Memory Match</span>
+        </div>
+    </div>
+
+    <div class="calculator" id="calculator" style="display:none;">
+        <input type="text" id="display" readonly>
+        <div class="keys">
+            <button onclick="clearDisplay()" class="clear">C</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('/')">/</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('*')">x</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('-')">-</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="calculate()" class="equal">=</button>
+            <button onclick="appendToDisplay('+')" class="operator">+</button>
+            <button class="back-button" onclick="showHome()">Back</button>
+        </div>
+    </div>
+
+    <div class="game" id="game" style="display:none;">
+        <div class="container-game">
+            <button class="back-button" onclick="showHome()">Back</button>
+            <div id="score">Score: 0</div>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <button id="startButton">Start Game</button>
+            <div id="gameOverModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Game Over!</h2>
+                    <p id="finalScore"></p>
+                    <button id="restartButton">Restart</button>
+                </div>
+            </div>
+            <div class="c-buttons">
+                <button id="upButton">&#8593;</button>
+                <button id="leftButton">&#8592;</button>
+                <button id="downButton">&#8595;</button>
+                <button id="rightButton">&#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="Clock" id="Clock" style="display:none;">
+        <div class="container">
+            <div id="clock"></div>
+            <div id="stopwatch">00:00:00</div>
+            <button class="btn" id="startStopBtn" onclick="toggleStopwatch()">Start / Stop</button>
+            <button class="btn" id="resetBtn" onclick="resetStopwatch()">Reset</button>
+            <button class="back-button" id="clockbtn" onclick="showHome()">Back</button>
+        </div>
+    </div>
+
+    <div class="memory-match" id="memory-match" style="display:none;">
+        <div class="container">
+            <h2>Memory Match Game</h2>
+            <div id="memory-game" class="memory-game">
+                <!-- Cards will be dynamically added here -->
+            </div>
+            <button class="back-button" id="memory-game-btn-home" onclick="showHome()">Back</button>
+        </div>
+        <div id="congratulationsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Congratulations!</h2>
+                <p>You found all the matching pairs!</p>
+                <button id="restartButton2">Restart Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
