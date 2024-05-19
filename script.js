@@ -1,387 +1,359 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const scoreDisplay = document.getElementById("score");
-const startButton = document.getElementById("startButton");
-const gameOverModal = document.getElementById("gameOverModal");
-const finalScoreDisplay = document.getElementById("finalScore");
-const restartButton = document.getElementById("restartButton");
-
-// Initial snake position and speed
-let snake = [{ x: 200, y: 200 }];
-let dx = 0;
-let dy = 0;
-
-// Initial apple position
-let apple = { x: 100, y: 100 };
-
-// Game speed
-const speed = 150;
-
-// Score
-let score = 0;
-
-// Interval ID for game loop
-let intervalId;
-
-// Function to draw snake
-function drawSnake() {
-    snake.forEach(segment => {
-        ctx.fillStyle = "#333";
-        ctx.fillRect(segment.x, segment.y, 20, 20);
-    });
+.homebody {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1b1b1b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-// Function to draw apple
-function drawApple() {
-    ctx.fillStyle = "red";
-    ctx.fillRect(apple.x, apple.y, 20, 20);
+.box-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
 }
 
-// Function to move snake
-function moveSnake() {
-    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-    snake.unshift(head);
-    if (head.x === apple.x && head.y === apple.y) {
-        generateApple();
-        score++;
-        updateScore();
-    } else {
-        snake.pop();
-    }
+.box {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(145deg, #333, #555);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-// Function to generate apple at random position
-function generateApple() {
-    const x = Math.floor(Math.random() * 20) * 20;
-    const y = Math.floor(Math.random() * 20) * 20;
-    apple = { x: x, y: y };
+.box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
-// Function to check if snake collides with itself or the canvas border
-function checkCollision() {
-    const head = snake[0];
-    if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
-        return true;
-    }
-    for (let i = 1; i < snake.length; i++) {
-        if (head.x === snake[i].x && head.y === snake[i].y) {
-            return true;
-        }
-    }
-    return false;
+.box img {
+    width: 100%;
+    height: 122px;
+    object-fit: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
-// Function to update game state
-function update() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawApple();
-    drawSnake();
-    moveSnake();
-    if (checkCollision()) {
-        endGame();
-    }
+.box span {
+    font-size: 18px;
+    padding: 5px 0;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-// Function to update score on the screen
-function updateScore() {
-    scoreDisplay.textContent = "Score: " + score;
+.calculator {
+    width: 320px;
+    border-radius: 10px;
+    background-color: #222;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    display: none;
+    flex-direction: column;
+    align-items: center;
 }
 
-// Function to handle keyboard input
-function handleKeyPress(event) {
-    const key = event.key;
-    if (key === "ArrowUp" && dy !== 20) {
-        dx = 0;
-        dy = -20;
-    } else if (key === "ArrowDown" && dy !== -20) {
-        dx = 0;
-        dy = 20;
-    } else if (key === "ArrowLeft" && dx !== 20) {
-        dx = -20;
-        dy = 0;
-    } else if (key === "ArrowRight" && dx !== -20) {
-        dx = 20;
-        dy = 0;
-    }
+#display {
+    width: calc(100% - 40px);
+    margin-bottom: 20px;
+    padding: 15px;
+    font-size: 28px;
+    border: none;
+    border-radius: 10px;
+    background-color: #333;
+    color: #fff;
+    text-align: right;
+    outline: none;
 }
 
-// Function to start the game
-function startGame() {
-    score = 0;
-    updateScore();
-    resetSnake();
-    generateApple();
-    intervalId = setInterval(update, speed);
-    startButton.style.display = "none";
-    window.addEventListener("keydown", handleKeyPress);
+.keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
 
-// Function to end the game
-function endGame() {
-    clearInterval(intervalId);
-    gameOverModal.style.display = "block";
-    finalScoreDisplay.textContent = "Your Score: " + score;
-    window.removeEventListener("keydown", handleKeyPress);
+button {
+    padding: 15px;
+    font-size: 24px;
+    border: none;
+    border-radius: 10px;
+    background-color: #444;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    outline: none;
 }
 
-// Function to restart the game
-function restartGame() {
-    gameOverModal.style.display = "none";
-    startGame();
+button:hover {
+    background-color: #555;
 }
 
-// Function to reset the snake position
-function resetSnake() {
-    snake = [{ x: 200, y: 200 }];
-    dx = 0;
-    dy = 0;
+.operator {
+    background-color: #ff6347;
 }
 
-const upButton = document.getElementById("upButton");
-const downButton = document.getElementById("downButton");
-const leftButton = document.getElementById("leftButton");
-const rightButton = document.getElementById("rightButton");
-
-upButton.addEventListener("click", () => handleArrowClick("ArrowUp"));
-downButton.addEventListener("click", () => handleArrowClick("ArrowDown"));
-leftButton.addEventListener("click", () => handleArrowClick("ArrowLeft"));
-rightButton.addEventListener("click", () => handleArrowClick("ArrowRight"));
-
-function handleArrowClick(direction) {
-    if (direction === "ArrowUp" && dy !== 20) {
-        dx = 0;
-        dy = -20;
-    } else if (direction === "ArrowDown" && dy !== -20) {
-        dx = 0;
-        dy = 20;
-    } else if (direction === "ArrowLeft" && dx !== 20) {
-        dx = -20;
-        dy = 0;
-    } else if (direction === "ArrowRight" && dx !== -20) {
-        dx = 20;
-        dy = 0;
-    }
+.equal {
+    background-color: #4caf50;
 }
 
-
-startButton.addEventListener("click", startGame);
-restartButton.addEventListener("click", restartGame);
-
-function showCalculator() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('calculator').style.display = 'flex';
+.clear {
+    background-color: #f44336;
 }
 
-function showHome() {
-    document.getElementById('Clock').style.display = 'none';
-    document.getElementById('game').style.display = 'none';
-    document.getElementById('calculator').style.display = 'none';
-    document.getElementById('home-screen').style.display = 'flex';
+.back-button {
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background-color: #444;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    outline: none;
 }
 
-function appendToDisplay(value) {
-    document.getElementById('display').value += value;
+.back-button:hover {
+    background-color: #555;
 }
 
-function clearDisplay() {
-    document.getElementById('display').value = '';
+/* Game Styles */
+
+.container-game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-function calculate() {
-    var displayValue = document.getElementById('display').value;
-    try {
-        var result = eval(displayValue);
-        document.getElementById('display').value = result;
-    } catch (error) {
-        document.getElementById('display').value = 'Error';
-    }
+canvas {
+    border: 2px solid #333;
+    margin-bottom: 20px;
 }
 
-function showGame() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('game').style.display = 'block';
+#score {
+    color: #ff6347;
+    font-size: 24px;
+    margin-bottom: 20px;
 }
 
-let stopwatchInterval;
-let stopwatchRunning = false;
-let stopwatchTime = 0;
-
-function updateClock() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-
-    const timeString = `${hours}:${minutes}:${seconds}`;
-    document.getElementById("clock").textContent = timeString;
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-function updateStopwatch() {
-    const hours = String(Math.floor(stopwatchTime / 3600)).padStart(2, '0');
-    const minutes = String(Math.floor((stopwatchTime % 3600) / 60)).padStart(2, '0');
-    const seconds = String(stopwatchTime % 60).padStart(2, '0');
-
-    const stopwatchString = `${hours}:${minutes}:${seconds}`;
-    document.getElementById("stopwatch").textContent = stopwatchString;
+.modal-content {
+    background-color: #222;
+    margin: 20% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 50%;
+    text-align: center;
 }
 
-function toggleStopwatch() {
-    if (!stopwatchRunning) {
-        stopwatchInterval = setInterval(() => {
-            stopwatchTime++;
-            updateStopwatch();
-        }, 1000);
-        document.getElementById("startStopBtn").textContent = "Stop";
-    } else {
-        clearInterval(stopwatchInterval);
-        document.getElementById("startStopBtn").textContent = "Start";
-    }
-    stopwatchRunning = !stopwatchRunning;
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-function resetStopwatch() {
-    clearInterval(stopwatchInterval);
-    stopwatchRunning = false;
-    stopwatchTime = 0;
-    updateStopwatch();
-    document.getElementById("startStopBtn").textContent = "Start";
+.close:hover,
+.close:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-// Update the clock every second
-setInterval(updateClock, 1000);
-
-// Initial call to display the clock immediately
-updateClock();
-
-function showClock() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('Clock').style.display = 'block';
+button:hover {
+    background-color: #555;
 }
 
-
-function showMemoryMatch() {
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('memory-match').style.display = 'flex';
-    startMemoryGame();
+button#upButton,
+button#downButton,
+button#leftButton,
+button#rightButton {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.1s;
+    margin: 5px;
+    padding: 10px;
+    /* Increase touch target area */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Add shadow effect */
 }
 
-const cardsArray = [
-    { name: 'card1', img: 'Images/Card1-Image-18.png' },
-    { name: 'card2', img: 'Images/Card2-Image-18.png' },
-    { name: 'card3', img: 'Images/Card3-Image-18.png' },
-    { name: 'card4', img: 'Images/Card4-Image-18.png' },
-    { name: 'card5', img: 'Images/Card5-Image-18.png' },
-    { name: 'card6', img: 'Images/Card6-Image-18.png' },
-];
-
-let cardsChosen = [];
-let cardsChosenId = [];
-let cardsWon = [];
-
-function startMemoryGame() {
-    // Reset necessary game state variables
-    cardsChosen = [];
-    cardsChosenId = [];
-    cardsWon = [];
-
-    // Clear the game board
-    const gameBoard = document.getElementById('memory-game');
-    gameBoard.innerHTML = '';
-
-    // Generate and add new cards to the game board
-    const cards = [...cardsArray, ...cardsArray].sort(() => 0.5 - Math.random());
-
-    cards.forEach((card, index) => {
-        const cardElement = document.createElement('div');
-        cardElement.classList.add('card');
-        cardElement.dataset.id = index;
-        cardElement.dataset.name = card.name;
-
-        const cardImage = document.createElement('img');
-        cardImage.src = 'Images/card-back.png'; // Path to the back of the card image
-        cardImage.dataset.src = card.img; // Path to the front of the card image
-        cardElement.appendChild(cardImage);
-
-        cardElement.addEventListener('click', flipCard);
-
-        gameBoard.appendChild(cardElement);
-    });
+/* Style for arrow buttons on hover */
+button#upButton:hover,
+button#downButton:hover,
+button#leftButton:hover,
+button#rightButton:hover {
+    background-color: #555;
 }
 
-function flipCard() {
-    const cardId = this.dataset.id;
-    const cardImage = this.querySelector('img');
-
-    if (cardsChosenId.includes(cardId) || cardsChosen.length === 2) {
-        return;
-    }
-
-    cardImage.src = cardImage.dataset.src;
-    cardsChosen.push(this.dataset.name);
-    cardsChosenId.push(cardId);
-    this.classList.add('flipped');
-
-    if (cardsChosen.length === 2) {
-        setTimeout(checkForMatch, 500);
-    }
+/* Style for arrow buttons when pressed */
+button#upButton:active,
+button#downButton:active,
+button#leftButton:active,
+button#rightButton:active {
+    transform: scale(0.95);
+    box-shadow: none;
+    /* Remove shadow effect when pressed */
 }
 
-function checkForMatch() {
-    const cards = document.querySelectorAll('.card');
-    const [optionOneId, optionTwoId] = cardsChosenId;
-
-    if (cardsChosen[0] === cardsChosen[1] && optionOneId !== optionTwoId) {
-        cards[optionOneId].removeEventListener('click', flipCard);
-        cards[optionTwoId].removeEventListener('click', flipCard);
-        cardsWon.push(cardsChosen);
-    } else {
-        cards[optionOneId].querySelector('img').src = 'Images/card-back.png';
-        cards[optionTwoId].querySelector('img').src = 'Images/card-back.png';
-        cards[optionOneId].classList.remove('flipped');
-        cards[optionTwoId].classList.remove('flipped');
-    }
-
-    cardsChosen = [];
-    cardsChosenId = [];
-
-    if (cardsWon.length === cardsArray.length) {
-        showCongratulationsModal();
-    }
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
-function showHome() {
-    document.getElementById('Clock').style.display = 'none';
-    document.getElementById('game').style.display = 'none';
-    document.getElementById('calculator').style.display = 'none';
-    document.getElementById('memory-match').style.display = 'none';
-    document.getElementById('home-screen').style.display = 'flex';
+#clock {
+    font-size: 48px;
+    margin-bottom: 20px;
 }
 
-function showCongratulationsModal() {
-    const congratulationsModal = document.getElementById("congratulationsModal");
-    congratulationsModal.style.display = "block";
+#stopwatch {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
 
-    // Close the modal when the close button or outside the modal area is clicked
-    const closeButton = document.querySelector(".modal-content .close");
-    closeButton.addEventListener("click", function () {
-        congratulationsModal.style.display = "none";
-    });
-    window.addEventListener("click", function (event) {
-        if (event.target === congratulationsModal) {
-            congratulationsModal.style.display = "none";
-        }
-    });
+.btn {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
 
-    // Restart the game when the restart button is clicked
-    const restartButton = document.getElementById("restartButton2");
-    restartButton.addEventListener("click", function () {
-        congratulationsModal.style.display = "none";
-        startMemoryGame(); // Assuming startMemoryGame() is the function to restart the game
-    });
+#clock {
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+#stopwatch {
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+#clockbtn {
+    margin-top: 10px;
+    background-color: #333;
+    border: none;
+    border-radius: 5px;
 }
 
 
-restartButton.addEventListener("click", function () {
-    congratulationsModal.style.display = "none";
-    startMemoryGame();
-});
+.memory-match {
+    height: 350px;
+    width: 320px;
+    border-radius: 10px;
+    background-color: #222;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+.memory-game {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.container h2 {
+    color: white;
+}
+
+.memory-game .card {
+    width: 60px;
+    height: 60px;
+    background-color: #444;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.memory-game .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.memory-game .card.flipped img {
+    display: block;
+}
+
+.memory-game .card.flipped {
+    transform: rotateY(180deg);
+}
+
+#memory-game-btn-home {
+    margin-top: 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #222;
+    margin: 20% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 50%;
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
