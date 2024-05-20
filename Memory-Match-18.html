@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Match Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            direction: column;
+            background-color: #1b1b1b;
+        }
+
+        .memory-match {
+            justify-content: center;
+            align-items: center;
+            height: 350px;
+            width: 320px;
+            border-radius: 10px;
+            background-color: #222;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .container h2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .memory-game .card {
+            width: 60px;
+            height: 60px;
+            background-color: #444;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .memory-game .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            border-radius: 5px;
+        }
+
+        .memory-game .card.flipped img {
+            display: block;
+        }
+
+        .memory-game .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        #memory-game-btn-home {
+            margin-top: 10px;
+        }
+
+        .modal {
+            display: none;
+            color: white;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #222;
+            margin: 20% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%;
+            text-align: center;
+        }
+
+        #restartButton2 {
+            cursor: pointer;
+            color: white;
+            padding: 10px 20px 10px 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            background-color: #222;
+            border: 2px solid #222;
+            border-radius: 4px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .back-button {
+            padding: 12px 18px 12px 18px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background-color: #444;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .back-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="memory-match" id="memory-match">
+        <div class="container">
+            <h2>Memory Match Game</h2>
+            <div id="memory-game" class="memory-game">
+                <!-- Cards will be dynamically added here -->
+            </div>
+        </div>
+        <button class="back-button" id="memory-game-btn-home" onclick="history.back()">Back</button>
+        <div id="congratulationsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Congratulations!</h2>
+                <p>You found all the matching pairs!</p>
+                <button id="restartButton2">Restart Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript Code
+        const cardsArray = [
+            { name: 'card1', img: 'Images/Card1-Image-18.png' },
+            { name: 'card2', img: 'Images/Card2-Image-18.png' },
+            { name: 'card3', img: 'Images/Card3-Image-18.png' },
+            { name: 'card4', img: 'Images/Card4-Image-18.png' },
+            { name: 'card5', img: 'Images/Card5-Image-18.png' },
+            { name: 'card6', img: 'Images/Card6-Image-18.png' },
+        ];
+
+        let cardsChosen = [];
+        let cardsChosenId = [];
+        let cardsWon = [];
+
+        function startMemoryGame() {
+            // Reset necessary game state variables
+            cardsChosen = [];
+            cardsChosenId = [];
+            cardsWon = [];
+
+            // Clear the game board
+            const gameBoard = document.getElementById('memory-game');
+            gameBoard.innerHTML = '';
+
+            // Generate and add new cards to the game board
+            const cards = [...cardsArray, ...cardsArray].sort(() => 0.5 - Math.random());
+
+            cards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.dataset.id = index;
+                cardElement.dataset.name = card.name;
+
+                const cardImage = document.createElement('img');
+                cardImage.src = 'Images/card-back.png'; // Path to the back of the card image
+                cardImage.dataset.src = card.img; // Path to the front of the card image
+                cardElement.appendChild(cardImage);
+
+                cardElement.addEventListener('click', flipCard);
+
+                gameBoard.appendChild(cardElement);
+            });
+        }
+
+        function flipCard() {
+            const cardId = this.dataset.id;
+            const cardImage = this.querySelector('img');
+
+            if (cardsChosenId.includes(cardId) || cardsChosen.length === 2) {
+                return;
+            }
+
+            cardImage.src = cardImage.dataset.src;
+            cardsChosen.push(this.dataset.name);
+            cardsChosenId.push(cardId);
+            this.classList.add('flipped');
+
+            if (cardsChosen.length === 2) {
+                setTimeout(checkForMatch, 500);
+            }
+        }
+
+        function checkForMatch() {
+            const cards = document.querySelectorAll('.card');
+            const [optionOneId, optionTwoId] = cardsChosenId;
+
+            if (cardsChosen[0] === cardsChosen[1] && optionOneId !== optionTwoId) {
+                cards[optionOneId].removeEventListener('click', flipCard);
+                cards[optionTwoId].removeEventListener('click', flipCard);
+                cardsWon.push(cardsChosen);
+            } else {
+                cards[optionOneId].querySelector('img').src = 'Images/card-back.png';
+                cards[optionTwoId].querySelector('img').src = 'Images/card-back.png';
+                cards[optionOneId].classList.remove('flipped');
+                cards[optionTwoId].classList.remove('flipped');
+            }
+
+            cardsChosen = [];
+            cardsChosenId = [];
+
+            if (cardsWon.length === cardsArray.length) {
+                showCongratulationsModal();
+            }
+        }
+
+        function showCongratulationsModal() {
+            const congratulationsModal = document.getElementById("congratulationsModal");
+            congratulationsModal.style.display = "block";
+
+            // Close the modal when the close button or outside the modal area is clicked
+            const closeButton = document.querySelector(".modal-content .close");
+            closeButton.addEventListener("click", function () {
+                congratulationsModal.style.display = "none";
+                startMemoryGame(); // Restart the game
+            });
+
+            window.addEventListener("click", function (event) {
+                if (event.target === congratulationsModal) {
+                    congratulationsModal.style.display = "none";
+                    startMemoryGame(); // Restart the game
+                }
+            });
+
+            // Restart the game when the restart button inside the modal is clicked
+            const restartButton = document.getElementById('restartButton2');
+            restartButton.addEventListener('click', function () {
+                congratulationsModal.style.display = "none";
+                startMemoryGame(); // Restart the game
+            });
+        }
+
+        // Initialize the game when the page loads
+        window.onload = function () {
+            startMemoryGame();
+            document.getElementById('memory-match').style.display = 'flex';
+        };
+    </script>
