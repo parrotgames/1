@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Game</title>
+    <link rel="shortcut icon" href="Images/Car-Game-Image-18.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1b1b1b;
+        }
+
+        canvas {
+            display: block;
+            border-radius: 4px;
+            margin: 0 auto;
+            background-color: #444;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .control-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        button {
+            padding: 15px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background-color: #444;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .custom-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            display: none;
+        }
+
+        .custom-prompt h2 {
+            margin-top: 0;
+        }
+
+        .custom-prompt button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="score">Score: 0</div>
+    <button class="back-button" id="memory-game-btn-home" onclick="history.back()">Back</button>
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="control-buttons">
+        <button id="moveLeftButton" onmousedown="startMoveLeft()" onmouseup="stopMoveLeft()">&#9664;</button>
+        <button id="moveRightButton" onmousedown="startMoveRight()" onmouseup="stopMoveRight()">&#9654;</button>
+    </div>
+
+    <div class="custom-prompt" id="restartPrompt">
+        <h2>Game Over!</h2>
+        <p>Your score is: <span id="finalScore"></span></p>
+        <button onclick="restartGame()">Restart</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = 400;
+        canvas.height = 400;
+
+        const carWidth = 30;
+        const carHeight = 60;
+        const obstacleWidth = 30;
+        const obstacleHeight = 60;
+        let carX = canvas.width / 2 - carWidth / 2;
+        const carY = canvas.height - carHeight - 10;
+        let obstacles = [];
+        let score = 0;
+        let moveLeftInterval;
+        let moveRightInterval;
+        let gameRunning = true;
+
+        document.getElementById('score').innerText = `Score: ${score}`;
+
+        function startMoveLeft() {
+            moveLeftInterval = setInterval(() => {
+                if (carX > 0) {
+                    carX -= 5;
+                }
+            }, 20);
+        }
+
+        function stopMoveLeft() {
+            clearInterval(moveLeftInterval);
+        }
+
+        function startMoveRight() {
+            moveRightInterval = setInterval(() => {
+                if (carX < canvas.width - carWidth) {
+                    carX += 5;
+                }
+            }, 20);
+        }
+
+        function stopMoveRight() {
+            clearInterval(moveRightInterval);
+        }
+
+        function drawCar() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(carX, carY, carWidth, carHeight);
+        }
+
+        function drawObstacle(obstacle) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(obstacle.x, obstacle.y, obstacleWidth, obstacleHeight);
+        }
+
+        function updateObstacles() {
+            for (let i = 0; i < obstacles.length; i++) {
+                obstacles[i].y += 5;
+
+                if (obstacles[i].y > canvas.height) {
+                    obstacles.splice(i, 1);
+                    score++;
+                    document.getElementById('score').innerText = `Score: ${score}`;
+                    i--;
+                } else if (
+                    carX < obstacles[i].x + obstacleWidth &&
+                    carX + carWidth > obstacles[i].x &&
+                    carY < obstacles[i].y + obstacleHeight &&
+                    carY + carHeight > obstacles[i].y
+                ) {
+                    endGame();
+                }
+            }
+
+            if (Math.random() < 0.02) {
+                obstacles.push({ x: Math.random() * (canvas.width - obstacleWidth), y: -obstacleHeight });
+            }
+        }
+
+        function gameLoop() {
+            if (gameRunning) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawCar();
+                updateObstacles();
+                obstacles.forEach(drawObstacle);
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        gameLoop();
+
+        function endGame() {
+            gameRunning = false;
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('restartPrompt').style.display = 'block';
+        }
+
+        function restartGame() {
+            document.location.reload();
+        }
+    </script>
+</body>
+
+</html>
