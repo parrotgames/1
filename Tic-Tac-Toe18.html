@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
         body {
             display: flex;
             flex-direction: column;
@@ -13,7 +14,7 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Comic Neue', sans-serif;
             background-color: #ffebcd;
         }
 
@@ -148,7 +149,7 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2 id="winnerMessage"></h2>
-            <button id="modalRestartButton">Play Again</button>
+            <button onclick="location.reload()" id="modalRestartButton">Play Again</button>
         </div>
     </div>
     <script>
