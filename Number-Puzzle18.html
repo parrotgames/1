@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number puzzle</title>
+    <title>Number Puzzle</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+
         body {
-            font-family: 'Comic Sans MS', cursive;
-            background-color: #7fdbda;
-            /* Bright yellow */
+            font-family: 'Comic Neue', sans-serif;
+            background: #7fdbda;
             margin: 0;
             padding: 0;
             display: flex;
@@ -27,12 +28,11 @@
             grid-template-rows: repeat(3, 1fr);
             gap: 5px;
             background-color: #ffd699;
-            /* Light orange */
             border: 5px solid #ff704d;
-            /* Coral */
             padding: 5px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
         }
 
         .puzzle-piece {
@@ -40,19 +40,16 @@
             justify-content: center;
             align-items: center;
             font-size: 36px;
-            background-color: #ffeb3b;
-            /* Bright yellow */
+            background: linear-gradient(145deg, #ffeb3b, #ffcd38);
             border: 2px solid #ff704d;
-            /* Coral */
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .puzzle-piece:hover {
             transform: scale(1.1);
-            background-color: #ffee58;
-            /* Lighter yellow */
+            background: linear-gradient(145deg, #ffee58, #ffcc00);
         }
 
         .hidden {
@@ -69,6 +66,7 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         .modal-content {
@@ -78,26 +76,26 @@
             border: 1px solid #333;
             width: 80%;
             text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            animation: zoomIn 0.5s ease-out;
         }
 
         button {
             margin-top: 10px;
-            background-color: #ff5722;
-            /* Deep orange */
+            background: linear-gradient(145deg, #ff5722, #e64a19);
             color: #fff;
             border: none;
             padding: 10px 20px;
             font-size: 18px;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         button:hover {
-            background-color: #ff704d;
-            /* Light coral */
+            background: linear-gradient(145deg, #ff704d, #f4511e);
+            transform: scale(1.05);
         }
 
         @media (max-width: 410px) {
@@ -111,6 +109,28 @@
             .puzzle-container {
                 height: 250px;
                 width: 250px;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
             }
         }
     </style>
@@ -129,6 +149,7 @@
         <div class="puzzle-piece" id="piece-8" data-number="8" onclick="movePiece(this)">8</div>
         <div class="puzzle-piece hidden" id="piece-9" data-number="9" onclick="movePiece(this)">9</div>
     </div>
+    <button onclick="initPuzzle()">Reset</button>
     <button id="Back-btn" onclick="history.back()">Back</button>
 
     <div id="myModal" class="modal">
@@ -140,13 +161,28 @@
     </div>
 
     <script>
-        // Function to shuffle an array
+        // Function to shuffle an array ensuring it is solvable
         function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+            let shuffled = false;
+            while (!shuffled) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                shuffled = isSolvable(array);
             }
             return array;
+        }
+
+        // Check if the shuffled array is solvable
+        function isSolvable(array) {
+            let invCount = 0;
+            for (let i = 0; i < array.length - 1; i++) {
+                for (let j = i + 1; j < array.length; j++) {
+                    if (array[i] && array[j] && array[i] > array[j]) invCount++;
+                }
+            }
+            return (invCount % 2 == 0);
         }
 
         // Initialize the puzzle pieces
@@ -159,6 +195,7 @@
                 const piece = puzzleContainer.querySelector(`#piece-${num}`);
                 piece.style.gridColumn = index % 3 + 1;
                 piece.style.gridRow = Math.floor(index / 3) + 1;
+                piece.classList.toggle('hidden', num === 9);
             });
         }
 
@@ -212,15 +249,8 @@
         // Function to restart the puzzle
         function restartPuzzle() {
             const modal = document.getElementById("myModal");
-            modal.style.display = "none"; // Hide the modal
-
-            // Reset puzzle pieces
-            const puzzlePieces = document.querySelectorAll('.puzzle-piece');
-            puzzlePieces.forEach(piece => {
-                piece.style.visibility = 'visible'; // Show all pieces
-            });
-
-            initPuzzle(); // Reinitialize the puzzle
+            modal.style.display = "none";
+            initPuzzle();
         }
     </script>
 
