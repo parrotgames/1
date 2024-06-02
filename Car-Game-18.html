@@ -85,6 +85,17 @@
         .custom-prompt button {
             margin-top: 10px;
         }
+
+        @media (max-width:380px) {
+            canvas {
+                display: block;
+                border-radius: 4px;
+                margin: 0 auto;
+                background-color: #444;
+                height: 350px;
+                width: 350px;
+            }
+        }
     </style>
 </head>
 
@@ -94,8 +105,10 @@
     <canvas id="gameCanvas"></canvas>
 
     <div class="control-buttons">
-        <button id="moveLeftButton" onmousedown="startMoveLeft()" onmouseup="stopMoveLeft()">&#9664;</button>
-        <button id="moveRightButton" onmousedown="startMoveRight()" onmouseup="stopMoveRight()">&#9654;</button>
+        <button id="moveLeftButton" onmousedown="startMoveLeft()" onmouseup="stopMoveLeft()"
+            ontouchstart="startMoveLeft()" ontouchend="stopMoveLeft()">&#9664;</button>
+        <button id="moveRightButton" onmousedown="startMoveRight()" onmouseup="stopMoveRight()"
+            ontouchstart="startMoveRight()" ontouchend="stopMoveRight()">&#9654;</button>
     </div>
 
     <div class="custom-prompt" id="restartPrompt">
