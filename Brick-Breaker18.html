@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brick Mania</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+
+        body {
+            font-family: 'Comic Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #87CEEB;
+            /* Sky blue background */
+        }
+
+        #gameCanvas {
+            border: 2px solid #000;
+            background-color: #fff;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #FF69B4;
+            /* Hot pink */
+            color: white;
+            box-shadow: 0px 4px #d14d80;
+        }
+
+        button:active {
+            box-shadow: 0px 2px #d14d80;
+            transform: translateY(2px);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 2px solid #888;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .modal-content p {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #FF69B4;
+            /* Hot pink */
+        }
+
+        @media (max-width: 500px) {
+            #gameCanvas {
+                border: 2px solid #000;
+                background-color: #fff;
+                height: 300px;
+                width: 460px;
+            }
+        }
+
+        @media (max-width: 470px) {
+            #gameCanvas {
+                border: 2px solid #000;
+                background-color: #fff;
+                height: 250px;
+                width: 400px;
+            }
+        }
+
+        @media (max-width: 405px) {
+            #gameCanvas {
+                border: 2px solid #000;
+                background-color: #fff;
+                height: 200px;
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 330px) {
+            #gameCanvas {
+                border: 2px solid #000;
+                background-color: #fff;
+                height: 180px;
+                width: 220px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 15px;
+                margin: 5px;
+                cursor: pointer;
+                border: none;
+                border-radius: 5px;
+                background-color: #FF69B4;
+                /* Hot pink */
+                color: white;
+                box-shadow: 0px 4px #d14d80;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="startButton">Start</button>
+    <canvas id="gameCanvas" width="480" height="320"></canvas>
+    <div class="controls">
+        <button id="leftButton">Left</button>
+        <button id="rightButton">Right</button>
+    </div>
+    <button id="Back-btn" onclick="history.back()">Back</button>
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <p>Oh no! Game Over!</p>
+            <button id="playAgainButton">Try Again</button>
+        </div>
+    </div>
+    <div id="winModal" class="modal">
+        <div class="modal-content">
+            <p>Yay! You Win!</p>
+            <button id="playAgainButtonWin">Play Again</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('startButton').addEventListener('click', startGame);
+
+        function startGame() {
+            document.getElementById('startButton').style.display = 'none'; // Hide the start button
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const ballRadius = 7; // Smaller ball
+            let x = canvas.width / 2;
+            let y = canvas.height - 30;
+            let dx = 2;
+            let dy = -2;
+
+            const paddleHeight = 10;
+            const paddleWidth = 75;
+            let paddleX = (canvas.width - paddleWidth) / 2;
+
+            let rightPressed = false;
+            let leftPressed = false;
+
+            const brickRowCount = 8;
+            const brickColumnCount = 10;
+            const brickWidth = 40; // Smaller brick width
+            const brickHeight = 10; // Smaller brick height
+            const brickPadding = 10;
+            const brickOffsetTop = 30;
+            const brickOffsetLeft = 30;
+
+            const bricks = [];
+            for (let c = 0; c < brickColumnCount; c++) {
+                bricks[c] = [];
+                for (let r = 0; r < brickRowCount; r++) {
+                    // Randomly decide if the brick is present (1) or not (0)
+                    const status = Math.random() > 0.5 ? 1 : 0;
+                    bricks[c][r] = { x: 0, y: 0, status: status };
+                }
+            }
+
+            let score = 0;
+
+            document.addEventListener('keydown', keyDownHandler);
+            document.addEventListener('keyup', keyUpHandler);
+            document.getElementById('leftButton').addEventListener('mousedown', () => leftPressed = true);
+            document.getElementById('leftButton').addEventListener('mouseup', () => leftPressed = false);
+            document.getElementById('rightButton').addEventListener('mousedown', () => rightPressed = true);
+            document.getElementById('rightButton').addEventListener('mouseup', () => rightPressed = false);
+            document.getElementById('playAgainButton').addEventListener('click', () => {
+                document.location.reload();
+                removeListeners();
+            });
+            document.getElementById('playAgainButtonWin').addEventListener('click', () => {
+                document.location.reload();
+                removeListeners();
+            });
+            // Remove the click event listener from the start button after starting the game
+            document.getElementById('startButton').removeEventListener('click', startGame);
+
+            function keyDownHandler(e) {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = true;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = true;
+                }
+            }
+
+            function keyUpHandler(e) {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = false;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = false;
+                }
+            }
+
+            function collisionDetection() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        const b = bricks[c][r];
+                        if (b.status === 1) {
+                            if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                                dy = -dy;
+                                b.status = 0;
+                                score++;
+                                if (score === brickRowCount * brickColumnCount) {
+                                    showWinModal();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function drawBall() {
+                ctx.beginPath();
+                ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#FF69B4'; // Hot pink
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawPaddle() {
+                ctx.beginPath();
+                ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+                ctx.fillStyle = '#FF69B4'; // Hot pink
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawBricks() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        if (bricks[c][r].status === 1) {
+                            const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                            const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                            bricks[c][r].x = brickX;
+                            bricks[c][r].y = brickY;
+                            ctx.beginPath();
+                            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                            ctx.fillStyle = `hsl(${c * 60}, 100%, 70%)`; // Colorful bricks
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+                }
+            }
+
+            function drawScore() {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#FF69B4'; // Hot pink
+                ctx.fillText('Score: ' + score, 8, 20);
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawBricks();
+                drawBall();
+                drawPaddle();
+                drawScore();
+                collisionDetection();
+
+                if (x + dx > canvas.width - ballRadius || x - ballRadius < 0) {
+                    dx = -dx;
+                }
+                if (y + dy < ballRadius) {
+                    dy = -dy;
+                } else if (y + dy > canvas.height - ballRadius) {
+                    if (x > paddleX && x < paddleX + paddleWidth) {
+                        dy = -dy;
+                    } else {
+                        showGameOverModal();
+                        return;
+                    }
+                }
+
+                if (rightPressed && paddleX < canvas.width - paddleWidth) {
+                    paddleX += 7;
+                } else if (leftPressed && paddleX > 0) {
+                    paddleX -= 7;
+                }
+
+                x += dx;
+                y += dy;
+                requestAnimationFrame(draw);
+            }
+
+            function showGameOverModal() {
+                const modal = document.getElementById('gameOverModal');
+                modal.style.display = 'block';
+            }
+
+            function showWinModal() {
+                const modal = document.getElementById('winModal');
+                modal.style.display = 'block';
+            }
+
+            function removeListeners() {
+                document.removeEventListener('keydown', keyDownHandler);
+                document.removeEventListener('keyup', keyUpHandler);
+                document.getElementById('leftButton').removeEventListener('mousedown', () => leftPressed = true);
+                document.getElementById('leftButton').removeEventListener('mouseup', () => leftPressed = false);
+                document.getElementById('rightButton').removeEventListener('mousedown', () => rightPressed = true);
+                document.getElementById('rightButton').removeEventListener('mouseup', () => rightPressed = false);
+                document.getElementById('playAgainButton').removeEventListener('click', () => {
+                    document.location.reload();
+                    removeListeners();
+                });
+                document.getElementById('playAgainButtonWin').removeEventListener('click', () => {
+                    document.location.reload();
+                    removeListeners();
+                });
+            }
+
+            draw();
+        }
+    </script>
+</body>
+
+</html>
