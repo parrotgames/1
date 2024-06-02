@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Select</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Neue', sans-serif;
+            background-color: #ffebcd;
+        }
+
+        a button {
+            margin-top: 10px;
+            background: linear-gradient(145deg, #ff5722, #e64a19);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        a button:hover {
+            background: linear-gradient(145deg, #ff704d, #f4511e);
+            transform: scale(1.05);
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #Back-btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: crimson;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #Back-btn:hover {
+            background-color: crimson;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="mode-buttons">
+        <a href="Tic-Tac-Toe18.html">
+            <button>Two Players</button>
+        </a>
+        <a href="Tic-Tac-Toe18-bot.html">
+            <button>Single Player (BOT)</button>
+        </a>
+    </div>
+    <button id="Back-btn" onclick="history.back()">Back</button>
+
+</body>
+
+</html>
