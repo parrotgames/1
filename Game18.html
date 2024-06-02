@@ -30,6 +30,8 @@
             border: 2px solid #333;
             background-color: #1e1e1e;
             margin-bottom: 20px;
+            width: 350px;
+            height: 350px;
         }
 
         #score {
@@ -96,7 +98,8 @@
             box-shadow: none;
         }
 
-        .c-buttons, .c-buttons2 {
+        .c-buttons,
+        .c-buttons2 {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -112,6 +115,36 @@
             border-radius: 50%;
             padding: 10px;
             margin: 5px;
+        }
+
+        @media (max-width: 360px) {
+            canvas {
+                border: 2px solid #333;
+                background-color: #1e1e1e;
+                margin-bottom: 20px;
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 310px) {
+            canvas {
+                border: 2px solid #333;
+                background-color: #1e1e1e;
+                margin-bottom: 20px;
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 255px) {
+            canvas {
+                border: 2px solid #333;
+                background-color: #1e1e1e;
+                margin-bottom: 20px;
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
