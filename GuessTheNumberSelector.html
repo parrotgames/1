@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the number</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: royalblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: white;
+            width: 450px;
+            height: 300px;
+            border-radius: 10px;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .Guess {
+            margin-top: 0;
+        }
+
+        button {
+            margin-top: 20px;
+            font-size: large;
+            cursor: pointer;
+            width: 350px;
+            height: 50px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: rgb(56, 208, 208);
+            box-shadow: 0 4px #999;
+            transition: background 0.5s;
+        }
+
+        button:hover {
+            transition: background 0.5s;
+            background-color: rgb(62, 169, 169);
+        }
+
+        button:active {
+            transition: background 0.5s;
+            background-color: rgb(45, 148, 148);
+            margin-bottom: -5px;
+            box-shadow: 0px 2px #999;
+        }
+
+        @media only screen and (max-width: 500px) {
+            #container {
+                background-color: white;
+                width: 350px;
+                height: 250px;
+                border-radius: 10px;
+                border: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            button {
+                font-size: 15px;
+                width: 250px;
+                height: 45px;
+            }
+        }
+
+        @media only screen and (max-width: 318px) {
+            #container {
+                width: 280px;
+                height: 200px;
+            }
+
+            button {
+                font-size: small;
+                width: 220px;
+                height: 35px;
+
+            }
+        }
+
+        @media only screen and (max-width: 240px) {
+            #container {
+                width: 200px;
+                height: 180px;
+            }
+
+            button {
+                width: 120px;
+                height: 25px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <a href="GuessTheNumberEasy.html">
+            <button class="easy">1 - 10 (EASY)</button>
+        </a>
+        <a href="GuessTheNumberMedium.html">
+            <button class="medium">1 - 100 (MEDIUM)</button>
+        </a>
+        <a href="GuessTheNumberHard.html">
+            <button class="hard">1 - 500 (HARD)</button>
+        </a>
+    </div>
+</body>
+
+</html>

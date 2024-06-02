@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the number (hard)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+
+        * {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: royalblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: white;
+            width: 450px;
+            height: 300px;
+            border-radius: 10px;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            font-size: 30px;
+        }
+
+        h6 {
+            color: #807d7d;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        input {
+            margin-top: 30px;
+            padding-left: 10px;
+            width: 250px;
+            height: 40px;
+            border: 1.8px solid rgba(0, 0, 0, 0.631);
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            cursor: pointer;
+            width: 90%;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: rgb(56, 208, 208);
+            box-shadow: 0 4px #999;
+            transition: background 0.5s;
+        }
+
+        button:hover {
+            transition: background 0.5s;
+            background-color: rgb(62, 169, 169);
+        }
+
+        button:active {
+            transition: background 0.5s;
+            background-color: rgb(45, 148, 148);
+            margin-top: 22px;
+            box-shadow: 0px 2px #999;
+        }
+
+        #Back-btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: crimson;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #Back-btn:hover {
+            background-color: crimson;
+        }
+
+        @media only screen and (max-width: 500px) {
+            #container {
+                background-color: white;
+                width: 300px;
+                height: 255px;
+                border-radius: 10px;
+                border: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            h2 {
+                font-size: 25px;
+            }
+
+            h6 {
+                font-size: 12px;
+            }
+
+            input {
+                margin-top: 20px;
+            }
+
+            button {
+                width: 90%;
+                height: 35px;
+            }
+        }
+
+        @media only screen and (max-width: 318px) {
+            #container {
+                width: 280px;
+                height: 220px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            h6 {
+                font-size: 12px;
+            }
+
+            input {
+                margin-top: 20px;
+                width: 210px;
+                font-size: 11px;
+            }
+
+            button {
+                margin-top: 10px;
+                width: 90%;
+                height: 35px;
+
+            }
+        }
+
+        @media only screen and (max-width: 240px) {
+            #container {
+                width: 200px;
+                height: 180px;
+            }
+
+            h2 {
+                font-size: 15px;
+            }
+
+            h6 {
+                font-size: 8px;
+            }
+
+            input {
+                font-size: 8.5px;
+                margin-top: 20px;
+                width: 150px;
+                height: 30px;
+            }
+
+            button {
+                width: 90%;
+                height: 20px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h2>Guess the number</h2>
+        <h6>Your number is smaller than the actual number</h6>
+        <input type="number" placeholder="Guess the number Between 1 - 500" class="Guesstext">
+        <button class="Guess">Guess</button>
+        <button id="Back-btn" onclick="history.back()">Back</button>
+    </div>
+</body>
+<script>
+    let submit = document.querySelector('button');
+    let input = document.querySelector('input');
+    let h6 = document.querySelector('h6');
+    let randomnumber = Math.floor(Math.random() * 500) + 1;
+
+    function checkGuess() {
+        let inputValue = parseInt(input.value);
+
+        if (inputValue > randomnumber && inputValue < 500) {
+            h6.innerText = 'Your number is greater than the actual number.';
+        }
+        else if (inputValue < randomnumber && inputValue) {
+            h6.innerText = 'Your number is smaller than the actual number.';
+        }
+        else if (inputValue === randomnumber) {
+            h6.innerText = 'You guessed the actual number!';
+            document.querySelector('body').style.backgroundColor = 'rgb(62, 169, 169)';
+            document.querySelector('#container').style.backgroundColor = 'royalblue';
+            setTimeout(() => {
+                document.querySelector('body').style.backgroundColor = 'royalblue';
+                document.querySelector('#container').style.backgroundColor = 'white';
+            }, 100);
+        }
+        else if (inputValue > 500) {
+            h6.innerText = 'Guess between 1 - 500.';
+        }
+        else if (inputValue <= 0) {
+            h6.innerText = 'Guess between 1 - 500.';
+        }
+        else {
+            h6.innerText = 'Some error occurs.';
+        }
+    }
+
+    submit.addEventListener('click', checkGuess);
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            checkGuess();
+        }
+    });
+
+</script>
+
+</html>
