@@ -11,82 +11,79 @@
         body {
             font-family: 'Comic Neue', sans-serif;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            justify-content: center;
-            align-items: center;
-            direction: column;
-            background-color: #1b1b1b;
+            background-color: #7fdbda;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            color: #ff6347;
         }
 
         .memory-match {
-            justify-content: center;
-            align-items: center;
-            height: 350px;
-            width: 320px;
-            border-radius: 10px;
-            background-color: #222;
-            padding: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-
+        
         .memory-game {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, 60px);
             gap: 10px;
-            margin-top: 20px;
         }
 
-        .container h2 {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-        }
-
-        .container button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .memory-game .card {
+        .card {
             width: 60px;
             height: 60px;
-            background-color: #444;
+            background-color: #add8e6;
+            border: 2px solid #000080;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 2rem;
+            color: #000080;
         }
 
-        .memory-game .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-            border-radius: 5px;
+        .card:hover {
+            background-color: #87cefa;
         }
 
-        .memory-game .card.flipped img {
-            display: block;
-        }
-
-        .memory-game .card.flipped {
+        .card.flipped {
             transform: rotateY(180deg);
         }
 
-        #memory-game-btn-home {
+        .back-button {
             margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: crimson;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #dc143c;
         }
 
         .modal {
             display: none;
-            color: white;
             position: fixed;
             z-index: 1;
             left: 0;
@@ -95,56 +92,43 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
         }
 
         .modal-content {
-            background-color: #222;
-            margin: 20% auto;
+            background-color: #fefefe;
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            border-radius: 10px;
-            width: 50%;
+            width: 80%;
+            max-width: 300px;
             text-align: center;
-        }
-
-        #restartButton2 {
-            cursor: pointer;
-            color: white;
-            padding: 10px 20px 10px 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            background-color: #222;
-            border: 2px solid #222;
-            border-radius: 4px;
+            border-radius: 10px;
+            position: relative;
         }
 
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #fff;
-            text-decoration: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
             cursor: pointer;
         }
 
-        .back-button {
-            padding: 12px 18px 12px 18px;
-            font-size: 18px;
+        #restartButton2 {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #32cd32;
+            color: #fff;
             border: none;
-            border-radius: 10px;
-            background-color: #444;
-            color: #fff;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            outline: none;
+            transition: background-color 0.3s;
         }
 
-        .back-button:hover {
-            background-color: #555;
+        #restartButton2:hover {
+            background-color: #228b22;
         }
     </style>
 </head>
@@ -169,14 +153,13 @@
     </div>
 
     <script>
-        // JavaScript Code
         const cardsArray = [
-            { name: 'card1', img: 'Images/Card1-Image-18.png' },
-            { name: 'card2', img: 'Images/Card2-Image-18.png' },
-            { name: 'card3', img: 'Images/Card3-Image-18.png' },
-            { name: 'card4', img: 'Images/Card4-Image-18.png' },
-            { name: 'card5', img: 'Images/Card5-Image-18.png' },
-            { name: 'card6', img: 'Images/Card6-Image-18.png' },
+            { name: 'card1', emoji: '🍎' },
+            { name: 'card2', emoji: '🍌' },
+            { name: 'card3', emoji: '🍇' },
+            { name: 'card4', emoji: '🍉' },
+            { name: 'card5', emoji: '🍒' },
+            { name: 'card6', emoji: '🍓' },
         ];
 
         let cardsChosen = [];
@@ -184,16 +167,13 @@
         let cardsWon = [];
 
         function startMemoryGame() {
-            // Reset necessary game state variables
             cardsChosen = [];
             cardsChosenId = [];
             cardsWon = [];
 
-            // Clear the game board
             const gameBoard = document.getElementById('memory-game');
             gameBoard.innerHTML = '';
 
-            // Generate and add new cards to the game board
             const cards = [...cardsArray, ...cardsArray].sort(() => 0.5 - Math.random());
 
             cards.forEach((card, index) => {
@@ -201,11 +181,9 @@
                 cardElement.classList.add('card');
                 cardElement.dataset.id = index;
                 cardElement.dataset.name = card.name;
+                cardElement.textContent = '';
 
-                const cardImage = document.createElement('img');
-                cardImage.src = 'Images/card-back.png'; // Path to the back of the card image
-                cardImage.dataset.src = card.img; // Path to the front of the card image
-                cardElement.appendChild(cardImage);
+                cardElement.dataset.emoji = card.emoji;
 
                 cardElement.addEventListener('click', flipCard);
 
@@ -215,13 +193,12 @@
 
         function flipCard() {
             const cardId = this.dataset.id;
-            const cardImage = this.querySelector('img');
 
             if (cardsChosenId.includes(cardId) || cardsChosen.length === 2) {
                 return;
             }
 
-            cardImage.src = cardImage.dataset.src;
+            this.textContent = this.dataset.emoji;
             cardsChosen.push(this.dataset.name);
             cardsChosenId.push(cardId);
             this.classList.add('flipped');
@@ -240,8 +217,8 @@
                 cards[optionTwoId].removeEventListener('click', flipCard);
                 cardsWon.push(cardsChosen);
             } else {
-                cards[optionOneId].querySelector('img').src = 'Images/card-back.png';
-                cards[optionTwoId].querySelector('img').src = 'Images/card-back.png';
+                cards[optionOneId].textContent = '';
+                cards[optionTwoId].textContent = '';
                 cards[optionOneId].classList.remove('flipped');
                 cards[optionTwoId].classList.remove('flipped');
             }
@@ -256,31 +233,28 @@
 
         function showCongratulationsModal() {
             const congratulationsModal = document.getElementById("congratulationsModal");
-            congratulationsModal.style.display = "block";
+            congratulationsModal.style.display = "flex";
 
-            // Close the modal when the close button or outside the modal area is clicked
             const closeButton = document.querySelector(".modal-content .close");
             closeButton.addEventListener("click", function () {
                 congratulationsModal.style.display = "none";
-                startMemoryGame(); // Restart the game
+                startMemoryGame();
             });
 
             window.addEventListener("click", function (event) {
                 if (event.target === congratulationsModal) {
                     congratulationsModal.style.display = "none";
-                    startMemoryGame(); // Restart the game
+                    startMemoryGame();
                 }
             });
 
-            // Restart the game when the restart button inside the modal is clicked
             const restartButton = document.getElementById('restartButton2');
             restartButton.addEventListener('click', function () {
                 congratulationsModal.style.display = "none";
-                startMemoryGame(); // Restart the game
+                startMemoryGame();
             });
         }
 
-        // Initialize the game when the page loads
         window.onload = function () {
             startMemoryGame();
             document.getElementById('memory-match').style.display = 'flex';
