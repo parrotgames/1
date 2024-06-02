@@ -197,6 +197,12 @@
             document.getElementById('leftButton').addEventListener('mouseup', () => leftPressed = false);
             document.getElementById('rightButton').addEventListener('mousedown', () => rightPressed = true);
             document.getElementById('rightButton').addEventListener('mouseup', () => rightPressed = false);
+            // Add touch events for mobile devices
+            document.getElementById('leftButton').addEventListener('touchstart', () => leftPressed = true);
+            document.getElementById('leftButton').addEventListener('touchend', () => leftPressed = false);
+            document.getElementById('rightButton').addEventListener('touchstart', () => rightPressed = true);
+            document.getElementById('rightButton').addEventListener('touchend', () => rightPressed = false);
+
             document.getElementById('playAgainButton').addEventListener('click', () => {
                 document.location.reload();
                 removeListeners();
@@ -246,7 +252,7 @@
             function drawBall() {
                 ctx.beginPath();
                 ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-                ctx.fillStyle = '#FF69B4'; // Hot pink
+                ctx.fillStyle = '#FF69B4';
                 ctx.fill();
                 ctx.closePath();
             }
@@ -333,6 +339,10 @@
                 document.getElementById('leftButton').removeEventListener('mouseup', () => leftPressed = false);
                 document.getElementById('rightButton').removeEventListener('mousedown', () => rightPressed = true);
                 document.getElementById('rightButton').removeEventListener('mouseup', () => rightPressed = false);
+                document.getElementById('leftButton').removeEventListener('touchstart', () => leftPressed = true);
+                document.getElementById('leftButton').removeEventListener('touchend', () => leftPressed = false);
+                document.getElementById('rightButton').removeEventListener('touchstart', () => rightPressed = true);
+                document.getElementById('rightButton').removeEventListener('touchend', () => rightPressed = false);
                 document.getElementById('playAgainButton').removeEventListener('click', () => {
                     document.location.reload();
                     removeListeners();
