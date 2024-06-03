@@ -16,14 +16,15 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            background-color: #1b1b1b;
+            background-color: #7fdbda;
         }
-
+        
         canvas {
             display: block;
             border-radius: 4px;
             margin: 0 auto;
             background-color: #444;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
 
         #score {
@@ -86,7 +87,7 @@
             margin-top: 10px;
         }
 
-        @media (max-width:380px) {
+        @media (max-width: 380px) {
             canvas {
                 display: block;
                 border-radius: 4px;
@@ -163,13 +164,13 @@
         }
 
         function drawCar() {
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(carX, carY, carWidth, carHeight);
+            ctx.font = '30px Arial';
+            ctx.fillText('🚗', carX, carY + carHeight);
         }
 
         function drawObstacle(obstacle) {
-            ctx.fillStyle = 'red';
-            ctx.fillRect(obstacle.x, obstacle.y, obstacleWidth, obstacleHeight);
+            ctx.font = '30px Arial';
+            ctx.fillText('🚙', obstacle.x, obstacle.y + obstacleHeight);
         }
 
         function updateObstacles() {
