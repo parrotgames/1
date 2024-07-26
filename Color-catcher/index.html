@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Catcher</title>
+    <link rel="shortcut icon" href="Color-catcher-logo.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <div id="basket"></div>
+        <div id="score">Score: 0</div>
+    </div>
+
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>How to Play</h2>
+            <div class="tutorial-text">
+                • Move the basket left or right by moving your mouse or swiping on the screen.<br>
+                • Click above the basket to change its color.<br>
+                • Catch the falling balls that match the basket's color to score points.<br>
+                • Avoid balls of different colors to maintain your score.
+            </div>
+            <button class="btn" id="startGameBtn">Start Game</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
