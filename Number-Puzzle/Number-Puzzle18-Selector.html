@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Puzzle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+
+        body {
+            font-family: 'Comic Neue', sans-serif;
+            background: #7fdbda;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        button {
+            margin-top: 10px;
+            background: linear-gradient(145deg, #ff5722, #e64a19);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #ff704d, #f4511e);
+            transform: scale(1.05);
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mode-buttons">
+        <a href="Number-Puzzle18.html">
+            <button>Medium</button>
+        </a>
+        <a href="Number-Puzzle18-hard.html">
+            <button>Hard</button>
+        </a>
+    </div>
+    <button id="Back-btn" onclick="history.back()">Back</button>
+
+</body>
+
+</html>

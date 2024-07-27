@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Puzzle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+
+        body {
+            font-family: 'Comic Neue', sans-serif;
+            background: #7fdbda;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .puzzle-container {
+            width: 400px;
+            height: 400px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            background-color: #ffd699;
+            border: 5px solid #ff704d;
+            padding: 5px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .puzzle-piece {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            background: linear-gradient(145deg, #ffeb3b, #ffcd38);
+            border: 2px solid #ff704d;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.1);
+            background: linear-gradient(145deg, #ffee58, #ffcc00);
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #333;
+            width: 80%;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        button {
+            margin-top: 10px;
+            background: linear-gradient(145deg, #ff5722, #e64a19);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #ff704d, #f4511e);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 410px) {
+            .puzzle-container {
+                height: 300px;
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 310px) {
+            .puzzle-container {
+                height: 250px;
+                width: 250px;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="puzzle-container" id="puzzle-container">
+        <div class="puzzle-piece" id="piece-1" data-number="1" onclick="movePiece(this)">1</div>
+        <div class="puzzle-piece" id="piece-2" data-number="2" onclick="movePiece(this)">2</div>
+        <div class="puzzle-piece" id="piece-3" data-number="3" onclick="movePiece(this)">3</div>
+        <div class="puzzle-piece" id="piece-4" data-number="4" onclick="movePiece(this)">4</div>
+        <div class="puzzle-piece" id="piece-5" data-number="5" onclick="movePiece(this)">5</div>
+        <div class="puzzle-piece" id="piece-6" data-number="6" onclick="movePiece(this)">6</div>
+        <div class="puzzle-piece" id="piece-7" data-number="7" onclick="movePiece(this)">7</div>
+        <div class="puzzle-piece" id="piece-8" data-number="8" onclick="movePiece(this)">8</div>
+        <div class="puzzle-piece hidden" id="piece-9" data-number="9" onclick="movePiece(this)">9</div>
+    </div>
+    <button onclick="initPuzzle()">Reset</button>
+    <button id="Back-btn" onclick="history.back()">Back</button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #ff5722;">Congratulations!</h2>
+            <p style="color: #333;">You have solved the puzzle!</p>
+            <button onclick="restartPuzzle()">Restart Puzzle</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to shuffle an array ensuring it is solvable
+        function shuffle(array) {
+            let shuffled = false;
+            while (!shuffled) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                shuffled = isSolvable(array);
+            }
+            return array;
+        }
+
+        // Check if the shuffled array is solvable
+        function isSolvable(array) {
+            let invCount = 0;
+            for (let i = 0; i < array.length - 1; i++) {
+                for (let j = i + 1; j < array.length; j++) {
+                    if (array[i] && array[j] && array[i] > array[j]) invCount++;
+                }
+            }
+            return (invCount % 2 == 0);
+        }
+
+        // Initialize the puzzle pieces
+        function initPuzzle() {
+            const numbers = Array.from({ length: 9 }, (_, i) => i + 1);
+            const shuffledNumbers = shuffle(numbers);
+            const puzzleContainer = document.getElementById('puzzle-container');
+
+            shuffledNumbers.forEach((num, index) => {
+                const piece = puzzleContainer.querySelector(`#piece-${num}`);
+                piece.style.gridColumn = index % 3 + 1;
+                piece.style.gridRow = Math.floor(index / 3) + 1;
+                piece.classList.toggle('hidden', num === 9);
+            });
+        }
+
+        // Move the puzzle piece
+        function movePiece(piece) {
+            const emptyPiece = document.querySelector('.puzzle-piece.hidden');
+            if (!emptyPiece) return;
+
+            const pieceColumn = parseInt(piece.style.gridColumn);
+            const pieceRow = parseInt(piece.style.gridRow);
+            const emptyPieceColumn = parseInt(emptyPiece.style.gridColumn);
+            const emptyPieceRow = parseInt(emptyPiece.style.gridRow);
+
+            if (Math.abs(pieceColumn - emptyPieceColumn) + Math.abs(pieceRow - emptyPieceRow) !== 1) return;
+
+            const tempColumn = piece.style.gridColumn;
+            const tempRow = piece.style.gridRow;
+            piece.style.gridColumn = emptyPiece.style.gridColumn;
+            piece.style.gridRow = emptyPiece.style.gridRow;
+            emptyPiece.style.gridColumn = tempColumn;
+            emptyPiece.style.gridRow = tempRow;
+
+            checkSolution();
+        }
+
+        // Check if the puzzle is solved
+        function checkSolution() {
+            const pieces = document.querySelectorAll('.puzzle-piece');
+            const sortedPieces = Array.from(pieces).sort((a, b) => {
+                return parseInt(a.getAttribute('data-number')) - parseInt(b.getAttribute('data-number'));
+            });
+
+            for (let i = 0; i < sortedPieces.length; i++) {
+                const piece = sortedPieces[i];
+                const pieceColumn = parseInt(piece.style.gridColumn);
+                const pieceRow = parseInt(piece.style.gridRow);
+                const correctColumn = (i % 3) + 1;
+                const correctRow = Math.floor(i / 3) + 1;
+                if (pieceColumn !== correctColumn || pieceRow !== correctRow) return;
+            }
+
+            const modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        }
+
+        // Initialize the puzzle when the page loads
+        window.onload = function () {
+            initPuzzle();
+        };
+
+        // Function to restart the puzzle
+        function restartPuzzle() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            initPuzzle();
+        }
+    </script>
+
+</body>
+
+</html>
